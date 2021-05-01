@@ -1,0 +1,31 @@
+package zaaim.halim;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class MutationReducer extends Reducer<Text, IntWritable, Text, Text> {
+	private Text pos = new Text();
+	private Text output = new Text();
+
+	public void reduce(Text key, Iterable<IntWritable> values, Context context)
+			throws IOException, InterruptedException {
+		int count = 1;
+		String positions = "";
+		for (IntWritable val : values) {
+
+			positions = positions + ", " + val.get();
+			for (IntWritable v : values) {
+				count = count + val.get();
+
+				positions = positions + ", " + val.get();
+			}
+		}
+		output.set(key.toString() + "\t" + count);
+		pos.set(positions.substring(0, positions.length() - 1));
+		context.write(output, pos);
+	}
+
+}

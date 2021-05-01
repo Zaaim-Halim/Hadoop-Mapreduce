@@ -1,0 +1,30 @@
+package zaaim.halim;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class TripletReducer extends Reducer<Text,Pair<IntWritable, IntWritable>,Text,IntWritable>{
+
+	private IntWritable count = new  IntWritable();
+	private Text output = new Text();
+
+	public void reduce(Text key ,Iterable<Pair<IntWritable, IntWritable>> pairs,Context context)
+			throws IOException, InterruptedException {
+        
+		for (Pair<IntWritable, IntWritable> val : pairs) {
+			output.set(key.toString() + "\t" + val.getT1().get());
+			int sum = 0;
+			for(Pair<IntWritable, IntWritable> v : pairs)
+			{
+				sum = sum + v.getT2().get();
+			}
+			count.set(sum);
+			context.write(output, count);
+		}
+
+	}
+
+}

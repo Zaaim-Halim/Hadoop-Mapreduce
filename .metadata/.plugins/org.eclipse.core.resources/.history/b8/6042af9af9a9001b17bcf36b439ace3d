@@ -1,0 +1,28 @@
+package com;
+
+import java.util.Arrays;
+
+public class Test {
+
+	public static void main(String[] args) {
+		char c = 'C';
+		String line = "AAACCCCBBTTCCCC";
+		char [] seq = new char[4];
+		Arrays.fill(seq, c);
+		String sequence = new String(seq);
+		System.out.println(sequence);
+		while(line.contains(sequence))
+		{
+			int index = line.indexOf(sequence);
+			System.out.println("index = "+index);
+			for(int i = 0 ; i<4;i++)
+			{
+				line = line.replace(c, '_');
+				
+			}
+			System.out.println(line);
+		}
+
+	}
+
+}

@@ -1,0 +1,75 @@
+package zaaim.halim;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class MutationMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+	private IntWritable position = new IntWritable();
+	private Text word = new Text();
+
+	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+		String line = value.toString().trim();
+		char[] lineChars = line.toString().toCharArray();
+		int i = 0;
+		for (i = 0; i < lineChars.length - 3; i++) {
+			String type = lineChars[i] + "";
+			String mutation = null;
+			switch (type.trim()) {
+			case "A":
+				mutation = "AAA";
+				if (mutation.equals(line.substring(i, i + 3))) {
+					word.set(mutation);
+					position.set(i);
+				}
+
+				break;
+			case "C":
+				mutation = "CCCC";
+				if (mutation.equals(line.substring(i, i + 4))) {
+					word.set(mutation);
+					position.set(i);
+				}
+
+				break;
+			case "G":
+				mutation = "GGGG";
+				if (mutation.equals(line.substring(i, i + 4)))
+
+				{
+					word.set(mutation);
+					position.set(i);
+				}
+				break;
+			case "T":
+				mutation = "TTT";
+				if (mutation.equals(line.substring(i, i + 3))) {
+					word.set(mutation);
+					position.set(i);
+				}
+				break;
+			default:
+				break;
+
+			}
+
+			context.write(word, position);
+		}
+		if (line.substring(i, line.length()).equals("AAA")) {
+
+			word.set("AAA");
+			position.set(i);
+			context.write(word, position);
+		}
+		if (line.substring(i, line.length()).equals("TTT")) {
+
+			word.set("TTT");
+			position.set(i);
+			context.write(word, position);
+		}
+	}
+
+}

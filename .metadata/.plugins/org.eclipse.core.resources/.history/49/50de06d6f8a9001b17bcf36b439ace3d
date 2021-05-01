@@ -1,0 +1,17 @@
+package com;
+
+import java.util.Arrays;
+
+public class Test {
+
+	public static void main(String[] args) {
+		char c = 'C';
+		String line = "AAACCCCBBTT";
+		char [] seq = new char[4];
+		Arrays.fill(seq, c);
+		String sequence = new String(seq);
+		System.out.println(sequence);
+
+	}
+
+}

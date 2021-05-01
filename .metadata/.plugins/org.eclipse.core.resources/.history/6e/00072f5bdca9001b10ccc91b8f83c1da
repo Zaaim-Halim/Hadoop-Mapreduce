@@ -1,0 +1,35 @@
+package zaaim.halim;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class TripletReducer extends Reducer<Text,Pair,Text,IntWritable>{
+
+	private IntWritable count = new  IntWritable();
+	private Text output = new Text();
+
+	public void reduce(Text key ,Iterable<Pair> pairs,Context context)
+			throws IOException, InterruptedException {
+        
+		for (Pair val : pairs) {
+			StringBuilder positions = new StringBuilder();
+			positions.append(val.getPosition().get());
+			int sum = 1;
+			for(Pair v : pairs)
+			{
+				sum = sum + v.getCount().get();
+				positions.append(val.getPosition().get());
+				positions.append(",");
+				
+			}
+			output.set(key.toString() + "\t" + positions);
+			count.set(sum);
+			context.write(output, count);
+		}
+
+	}
+
+}

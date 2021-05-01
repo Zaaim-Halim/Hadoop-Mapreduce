@@ -1,0 +1,53 @@
+package zaaim.halim;
+
+import java.io.IOException;
+
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class TripletMapper extends Mapper<LongWritable,Text,Text,Pair>{
+	private IntWritable position = new IntWritable();
+	private final static IntWritable one = new IntWritable(1);
+
+	private Text word = new Text();
+
+	public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+		String line = value.toString().trim();
+		char[] lineChars = line.toString().toCharArray();
+        int i = 0;
+		for (i = 0 ; i <lineChars.length-3; i++) {
+            String triplet = line.substring(i,i+3);
+            String newLine = null;
+            if(i > 0)
+            {
+            	newLine =  line.substring(0,i) + line.substring(i+2,line.length());
+            }
+            else
+                newLine = line.substring(i+2,line.length());
+            
+            for(int j = 0 ; j < newLine.length()-3; j++)
+            {
+            	if(line.substring(j,j+3).equals(triplet))
+            	{
+          
+            		position.set(i+1);
+            		word.set(triplet);
+            		Pair pair = new Pair();
+            		pair.setCount(one);pair.setPosition(position);
+         			context.write(word, pair);
+            	}
+            	
+            }
+            
+  
+		}
+		position.set(i+1);
+		word.set(line.substring(i, line.length()));
+		Pair pair = new Pair();
+		pair.setCount(one);pair.setPosition(position);
+		context.write(word, pair);
+	}
+
+}
